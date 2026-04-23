@@ -223,6 +223,33 @@
     animation: fadeUp 0.5s ease both;
   }
 
+  /* ─── STATS ─── */
+  .stats-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: var(--accent2);
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -1009,6 +1036,23 @@ function renderApp(workouts) {
     </div>
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
     <div class="week-dots">${dotHtml}</div>
+  </div>`;
+
+  // Stats acumulada
+  const pastWorkouts = workouts.filter(w => w.fecha < today);
+  const totalKm = pastWorkouts.reduce((sum, w) => sum + (parseInt(w.descripcion?.match(/\d+km/)?.[0]) || 0), 0);
+  html += `
+  <div class="stats-section" style="animation: fadeUp 0.4s 0.08s ease both">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">${pastWorkouts.length}</div>
+        <div class="stat-label">Sesiones</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">${totalKm}</div>
+        <div class="stat-label">km acumulados</div>
+      </div>
+    </div>
   </div>`;
 
   // ── Next workout
