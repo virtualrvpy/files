@@ -718,6 +718,46 @@
     text-transform: uppercase;
   }
 
+  /* ─── ZONES LEGEND ─── */
+  .zones-section {
+    padding: 16px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-width: 480px;
+  }
+  .zone-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .zone-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .zone-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text);
+    letter-spacing: 0.05em;
+  }
+  .zone-pace {
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .zones-section { padding: 16px 40px 20px; }
+    .zones-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
   /* ─── DESKTOP ─── */
   @media (min-width: 768px) {
     .hero { padding: 56px 40px 40px; }
@@ -815,6 +855,14 @@ const TIPO_LABELS = {
   race:     'Carrera',
   rest:     'Descanso',
 };
+
+const ZONES = [
+  { tag: 'E', label: 'Fácil', pace: '6:35/km', desc: '65–72% FC', color: 'var(--easy)' },
+  { tag: 'M', label: 'Moderado', pace: '6:00/km', desc: '72–78% FC', color: 'var(--tempo)' },
+  { tag: 'T', label: 'Tempo', pace: '5:15/km', desc: '82–88% FC', color: 'var(--tempo)' },
+  { tag: 'I', label: 'Intervalos', pace: '4:50/km', desc: '90–95% FC', color: 'var(--interval)' },
+  { tag: 'R', label: 'Pace 21K', pace: '5:40/km', desc: 'Entre M y T', color: 'var(--race)' },
+];
 
 function tipoColor(t) {
   return TIPO_COLORS[t?.trim()] || 'var(--muted)';
@@ -1031,6 +1079,20 @@ function renderApp(workouts) {
   }
 
   html += `</div></div>`;
+
+  // Zonas
+  const zonesHtml = ZONES.map(z => `
+    <div class="zone-item">
+      <div class="zone-dot" style="background:${z.color}"></div>
+      <span class="zone-label"><strong>${z.tag}</strong> ${z.label}</span>
+      <span class="zone-pace">${z.pace}</span>
+    </div>`).join('');
+
+  html += `
+  <div class="zones-section" style="animation: fadeUp 0.4s 0.25s ease both">
+    <div class="section-label">Zonas de ritmo</div>
+    <div class="zones-grid">${zonesHtml}</div>
+  </div>`;
 
   // Footer
   html += `<footer><div class="footer-text">VDOT 42–43 · JD Methodology · Sub 2:00 🚀</div></footer>`;
