@@ -408,13 +408,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    height: 18px;
+    padding: 0 5px;
     border-radius: 3px;
     font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 500;
-    margin-left: 4px;
+    margin-left: 6px;
+    white-space: nowrap;
   }
 
   /* ─── FULL PLAN ─── */
@@ -891,8 +892,9 @@ function renderZones(desc) {
   if (!matches) return '';
   return matches.map(tag => {
     const zone = tag.slice(1, -1);
-    const color = ZONES.find(z => z.tag === zone)?.color || 'var(--muted)';
-    return `<span class="zone-chip" style="background:${color};color:#000;">${zone}</span>`;
+    const z = ZONES.find(z => z.tag === zone);
+    if (!z) return '';
+    return `<span class="zone-chip" style="background:${z.color};color:#000;" title="${z.label} ${z.pace}">${zone} (${z.pace})</span>`;
   }).join('');
 }
 
