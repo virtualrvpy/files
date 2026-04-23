@@ -404,6 +404,19 @@
     flex-shrink: 0;
   }
 
+  .zone-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
   /* ─── FULL PLAN ─── */
   .week-block {
     margin-bottom: 4px;
@@ -872,6 +885,17 @@ function tipoLabel(t) {
   return TIPO_LABELS[t?.trim()] || t;
 }
 
+function renderZones(desc) {
+  if (!desc) return '';
+  const matches = desc.match(/\[([EMTIR])\]/g);
+  if (!matches) return '';
+  return matches.map(tag => {
+    const zone = tag.slice(1, -1);
+    const color = ZONES.find(z => z.tag === zone)?.color || 'var(--muted)';
+    return `<span class="zone-chip" style="background:${color};color:#000;">${zone}</span>`;
+  }).join('');
+}
+
 function formatDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('es-PY', { weekday:'long', day:'numeric', month:'long' });
@@ -1032,10 +1056,10 @@ function renderApp(workouts) {
         <div class="day-name" style="color:${color}">${dayName}</div>
         <div class="day-num">${dayNum}</div>
       </div>
-      <div class="workout-info">
-        <div class="workout-sesion">${w.sesion || w.descripcion}</div>
-        <div class="workout-desc">${w.descripcion || ''}</div>
-      </div>
+<div class="workout-info">
+         <div class="workout-sesion">${w.sesion || w.descripcion}${renderZones(w.descripcion)}</div>
+         <div class="workout-desc">${w.descripcion || ''}</div>
+       </div>
       <div class="tipo-dot" style="background:${color}"></div>
     </div>`;
   }
@@ -1071,7 +1095,7 @@ function renderApp(workouts) {
              onclick="openModal(${JSON.stringify(w).replace(/"/g, '&quot;')})">
           <div class="plan-day">${w.dia}</div>
           <div class="tipo-dot" style="background:${color}"></div>
-          <div class="plan-sesion">${w.sesion || w.descripcion}</div>
+          <div class="plan-sesion">${w.sesion || w.descripcion}${renderZones(w.descripcion)}</div>
         </div>`;
     }
 
