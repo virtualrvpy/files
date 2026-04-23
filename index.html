@@ -1118,6 +1118,7 @@ function toggleWeek(header, wkNum) {
 // ─── CONFIG FORM (si falta Supabase) ──────────────
 function renderConfigForm(err) {
   const app = document.getElementById('app');
+  const hasLocal = localStorage.getItem('sb_url') && localStorage.getItem('sb_key');
   app.innerHTML = `
     ${err ? `<div class="error-msg">⚠ Error al conectar con Supabase: ${err}</div>` : ''}
     <div class="config-box">
@@ -1125,6 +1126,7 @@ function renderConfigForm(err) {
       <input id="sb-url" type="text" placeholder="https://xxxx.supabase.co" />
       <input id="sb-key" type="text" placeholder="eyJ... (anon key)" />
       <button onclick="saveConfig()">Conectar</button>
+      ${hasLocal ? `<button onclick="copyShareLink()" style="margin-top:8px;background:var(--surface);border:1px solid var(--border2);">📋 Copiar link para compartir</button>` : ''}
       <div class="config-hint">
         Encontrás estas claves en tu proyecto Supabase → Settings → API.<br>
         Una vez que las guardés, recargá la página.
@@ -1141,10 +1143,29 @@ function saveConfig() {
   location.reload();
 }
 
+function getShareLink(url, key) {
+  return `${location.origin}${location.pathname}?url=${encodeURIComponent(url)}&key=${encodeURIComponent(key)}`;
+}
+
+function copyShareLink() {
+  const url = localStorage.getItem('sb_url');
+  const key = localStorage.getItem('sb_key');
+  if (!url || !key) return;
+  const link = getShareLink(url, key);
+  navigator.clipboard.writeText(link).then(() => {
+    alert('Link copiado al portapapeles: ' + link);
+  });
+}
+
 // ─── INIT ─────────────────────────────────────────
 async function init() {
   let url = SUPABASE_URL;
   let key = SUPABASE_KEY;
+
+  // Override desde URL params (?url=...&key=...)
+  const params = new URLSearchParams(location.search);
+  if (params.get('url')) url = params.get('url');
+  if (params.get('key')) key = params.get('key');
 
   // Override desde localStorage si existen
   if (localStorage.getItem('sb_url')) url = localStorage.getItem('sb_url');
